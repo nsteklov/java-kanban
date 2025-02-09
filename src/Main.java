@@ -51,6 +51,7 @@ public class Main {
         subtask1.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask1);
         System.out.println(listOfSubtasks);
+        //taskManager.removeSubtasks();
         System.out.println(listOfEpics);
 
         System.out.println();

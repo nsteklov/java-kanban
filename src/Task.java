@@ -1,11 +1,10 @@
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Task {
-    protected String name;
-    protected String description;
-    protected Status status;
-    protected int id;
+    private String name;
+    private String description;
+    private Status status;
+    private int id;
 
     public Task(String name, String description) {
         this.name = name;
@@ -79,62 +78,3 @@ public class Task {
     }
 }
 
-class Epic extends Task {
-    private ArrayList<Integer> IDOfSubtasks;
-
-    public Epic(String name, String description) {
-        super(name, description);
-        IDOfSubtasks = new ArrayList<>();
-    }
-
-    public ArrayList<Integer> getIDOfSubtasks() {
-        return IDOfSubtasks;
-    }
-
-    public void addIDOfSubtask(Integer IDOfSubtask) {
-        if (!IDOfSubtasks.contains(IDOfSubtask)) {
-            IDOfSubtasks.add(IDOfSubtask);
-        };
-    }
-
-    public void removeIDOfSubtask(Integer IDOfSubtask) {
-        if (IDOfSubtasks.contains(IDOfSubtask)) {
-            IDOfSubtasks.remove(IDOfSubtask);
-        };
-    }
-
-    @Override
-    public String toString() {
-        return "Epic{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                ", id=" + id +
-                ", IDOfSubtasks=" + IDOfSubtasks +
-                '}';
-    }
-}
-
-class Subtask extends Task {
-    private int IDOfEpic;
-
-    public Subtask(String name, String description, int IDOfEpic) {
-        super(name, description);
-        this.IDOfEpic = IDOfEpic;
-    }
-
-    public int getIDOfEpic() {
-        return IDOfEpic;
-    }
-
-    @Override
-    public String toString() {
-        return "Subtask{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                ", id=" + id +
-                ", IDOfEpic=" + IDOfEpic +
-                '}';
-    }
-}
