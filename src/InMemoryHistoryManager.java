@@ -14,10 +14,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        List<Task> historyList = new ArrayList<>();
-        for (int i = taskHistory.size(); i >= 1; i--) {
-            historyList.add(taskHistory.get(i - 1));
-        }
-        return historyList;
+        return taskHistory;
     }
 }

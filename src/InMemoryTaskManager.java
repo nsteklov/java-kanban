@@ -185,6 +185,11 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.remove(id);
     }
 
+    @Override
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
     private int generateId() {
         id++;
         return id;
@@ -215,10 +220,5 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epic.setStatus(Status.IN_PROGRESS);
         }
-    }
-
-    @Override
-    public HistoryManager getHistoryManager() {
-        return historyManager;
     }
 }

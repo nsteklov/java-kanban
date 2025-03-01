@@ -107,7 +107,7 @@ public class InMemoryTaskManagerTest {
         task1.setDescription("Поменялся");
         taskManager.updateTask(task1);
         List<Task> historyList = historyManager.getHistory();
-        Task task1Initial = historyList.get(0);
+        Task task1Initial = historyList.get(historyList.size() -1 );
 
         assertEquals("Task1", task1Initial.getName());
         assertEquals("Не меняйся", task1Initial.getDescription());
@@ -150,7 +150,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void epicStatusUpated() {
+    public void epicStatusUpdated() {
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
         int IdOfEpic1 = epic1.getId();
