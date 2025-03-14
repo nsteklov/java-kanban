@@ -16,16 +16,16 @@ public class Main {
 
         Epic epic1 = new Epic("Epic1", "Лениться");
         taskManager.addEpic(epic1);
-        int IdOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Лежать на диване", IdOfEpic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Лежать на диване", idOfEpic1);
         taskManager.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Subtask2", "Переписываться в телефоне", IdOfEpic1);
+        Subtask subtask2 = new Subtask("Subtask2", "Переписываться в телефоне", idOfEpic1);
         taskManager.addSubtask(subtask2);
 
         Epic epic2 = new Epic("Epic2", "Идти в спортзал");
         taskManager.addEpic(epic2);
-        int IdOfEpic2 = epic2.getId();
-        Subtask subtask3 = new Subtask("Subtask3", "Поднять гантели", IdOfEpic2);
+        int idOfEpic2 = epic2.getId();
+        Subtask subtask3 = new Subtask("Subtask3", "Поднять гантели", idOfEpic2);
         taskManager.addSubtask(subtask3);
 
         ArrayList<Epic>listOfEpics = taskManager.getEpics();

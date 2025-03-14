@@ -51,17 +51,17 @@ public class InMemoryTaskManagerTest {
     public void shouldCreateAndFindDifferentTasks() {
         Task task1 = new Task("Task1", "Задача номер 1");
         taskManager.addTask(task1);
-        int IdOfTask1 = task1.getId();
+        int idOfTask1 = task1.getId();
         Epic epic1 = new Epic("Epic1", "Эпик номер 1");
         taskManager.addEpic(epic1);
-        int IdOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", IdOfEpic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", idOfEpic1);
         taskManager.addSubtask(subtask1);
-        int IdOfSubtask1 = subtask1.getId();
+        int idOfSubtask1 = subtask1.getId();
 
-        assertEquals(task1, taskManager.getTaskById(IdOfTask1));
-        assertEquals(epic1, taskManager.getEpicById(IdOfEpic1));
-        assertEquals(subtask1, taskManager.getSubtaskById(IdOfSubtask1));
+        assertEquals(task1, taskManager.getTaskById(idOfTask1));
+        assertEquals(epic1, taskManager.getEpicById(idOfEpic1));
+        assertEquals(subtask1, taskManager.getSubtaskById(idOfSubtask1));
     }
 
     @Test
@@ -81,8 +81,8 @@ public class InMemoryTaskManagerTest {
 
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
-        int IdOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", IdOfEpic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", idOfEpic1);
         taskManager.addSubtask(subtask1);
 
         assertEquals("Task1", task1.getName());
@@ -93,7 +93,7 @@ public class InMemoryTaskManagerTest {
 
         assertEquals("Subtask1", subtask1.getName());
         assertEquals("Подзадача 1", subtask1.getDescription());
-        assertEquals(IdOfEpic1, subtask1.getIDOfEpic());
+        assertEquals(idOfEpic1, subtask1.getIDOfEpic());
     }
 
     @Test
@@ -120,8 +120,8 @@ public class InMemoryTaskManagerTest {
         taskManager.addTask(task1);
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
-        int IdOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", IdOfEpic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", idOfEpic1);
         taskManager.addSubtask(subtask1);
 
         int task1ID = task1.getId();
@@ -140,25 +140,25 @@ public class InMemoryTaskManagerTest {
     public void subtaskAddedToEpic() {
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
-        int IdOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", IdOfEpic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", idOfEpic1);
         taskManager.addSubtask(subtask1);
-        int IdOfSubtask1 = subtask1.getId();
+        int idOfSubtask1 = subtask1.getId();
 
         ArrayList<Integer> idOfSubtasks =  epic1.getIDOfSubtasks();
-        assertTrue(idOfSubtasks.contains(IdOfSubtask1));
+        assertTrue(idOfSubtasks.contains(idOfSubtask1));
     }
 
     @Test
     public void epicStatusUpdated() {
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
-        int IdOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", IdOfEpic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", idOfEpic1);
         taskManager.addSubtask(subtask1);
         subtask1.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask1);
-        int IdOfSubtask1 = subtask1.getId();
+        int idOfSubtask1 = subtask1.getId();
 
         assertEquals(Status.DONE, epic1.getStatus());
     }
@@ -182,16 +182,16 @@ public class InMemoryTaskManagerTest {
     public void noIDOfDeletedSubtasksInEpic() {
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
-        int IdOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Эпичная подзадача", IdOfEpic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Эпичная подзадача", idOfEpic1);
         taskManager.addSubtask(subtask1);
-        int IdOfSubtask1 = subtask1.getId();
-        Subtask subtask2 = new Subtask("Subtask2", "Бесполезная подзадача", IdOfEpic1);
+        int idOfSubtask1 = subtask1.getId();
+        Subtask subtask2 = new Subtask("Subtask2", "Бесполезная подзадача", idOfEpic1);
         taskManager.addSubtask(subtask2);
-        int IdOfSubtask2 = subtask2.getId();
+        int idOfSubtask2 = subtask2.getId();
 
-        taskManager.removeSubtask(IdOfSubtask2);
-        assertFalse(epic1.getIDOfSubtasks().contains(IdOfSubtask2));
+        taskManager.removeSubtask(idOfSubtask2);
+        assertFalse(epic1.getIDOfSubtasks().contains(idOfSubtask2));
     }
 
     @Test

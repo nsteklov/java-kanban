@@ -48,8 +48,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic.getIDOfSubtasks() == null) {
             return listOfSubtasks;
         }
-        for (Integer IdOfSubtask : epic.getIDOfSubtasks()) {
-            Subtask subtask = getSubtaskById(IdOfSubtask);
+        for (Integer idOfSubtask : epic.getIDOfSubtasks()) {
+            Subtask subtask = getSubtaskById(idOfSubtask);
             if (subtask != null) {
                 listOfSubtasks.add(subtask);
             }
@@ -135,11 +135,11 @@ public class InMemoryTaskManager implements TaskManager {
         subtask.setId(id);
         subtask.setStatus(Status.NEW);
         subtasks.put(subtask.getId(), subtask);
-        Integer IDOfSubtask = subtask.getId();
-        Integer IDOfEpic = subtask.getIDOfEpic();
-        Epic epic = getEpicById(IDOfEpic);
+        Integer iDOfSubtask = subtask.getId();
+        Integer iDOfEpic = subtask.getIDOfEpic();
+        Epic epic = getEpicById(iDOfEpic);
         if (epic != null) {
-            epic.addIDOfSubtask(IDOfSubtask);
+            epic.addIDOfSubtask(iDOfSubtask);
             updateEpicStatus(epic);
         }
     }
