@@ -16,13 +16,15 @@ class Epic extends Task {
     public void addIDOfSubtask(Integer iDOfSubtask) {
         if (!iDOfSubtasks.contains(iDOfSubtask)) {
             iDOfSubtasks.add(iDOfSubtask);
-        };
+        }
+        ;
     }
 
     public void removeIDOfSubtask(Integer iDOfSubtask) {
         if (iDOfSubtasks.contains(iDOfSubtask)) {
             iDOfSubtasks.remove(iDOfSubtask);
-        };
+        }
+        ;
     }
 
     public void removeSubtasks() {
