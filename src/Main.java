@@ -11,7 +11,7 @@ public class Main {
         taskManager.addTask(task1);
         Task task2 = new Task("Task2", "Плясать");
         taskManager.addTask(task2);
-        ArrayList<Task>listOfTasks = taskManager.getTasks();
+        ArrayList<Task> listOfTasks = taskManager.getTasks();
         System.out.println(listOfTasks);
 
         Epic epic1 = new Epic("Epic1", "Лениться");
@@ -28,10 +28,10 @@ public class Main {
         Subtask subtask3 = new Subtask("Subtask3", "Поднять гантели", idOfEpic2);
         taskManager.addSubtask(subtask3);
 
-        ArrayList<Epic>listOfEpics = taskManager.getEpics();
+        ArrayList<Epic> listOfEpics = taskManager.getEpics();
         System.out.println(listOfEpics);
 
-        ArrayList<Subtask>listOfSubtasks = taskManager.getSubtasks();
+        ArrayList<Subtask> listOfSubtasks = taskManager.getSubtasks();
         System.out.println(listOfSubtasks);
 
         System.out.println();
