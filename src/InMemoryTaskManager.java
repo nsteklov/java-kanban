@@ -212,7 +212,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) {
             return;
         }
-        ArrayList<Subtask> subTasks =  getSubTasksByEpic(epic);
+        ArrayList<Subtask> subTasks = getSubTasksByEpic(epic);
         boolean allSubtasksNew = true;
         boolean allSubtasksDone = true;
         for (Subtask subTask : subTasks) {
