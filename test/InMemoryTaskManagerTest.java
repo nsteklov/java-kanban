@@ -1,10 +1,10 @@
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest {
     private static TaskManager taskManager;
@@ -107,7 +107,7 @@ public class InMemoryTaskManagerTest {
         task1.setDescription("Поменялся");
         taskManager.updateTask(task1);
         List<Task> historyList = historyManager.getHistory();
-        Task task1Initial = historyList.get(historyList.size() -1 );
+        Task task1Initial = historyList.get(historyList.size() -1);
 
         assertEquals("Task1", task1Initial.getName());
         assertEquals("Не меняйся", task1Initial.getDescription());
@@ -161,5 +161,48 @@ public class InMemoryTaskManagerTest {
         int IdOfSubtask1 = subtask1.getId();
 
         assertEquals(Status.DONE, epic1.getStatus());
+    }
+
+    @Test
+    public void taskRemovedFromHistory() {
+        Task task1 = new Task("Task1", "Не меняйся");
+        taskManager.addTask(task1);
+        historyManager.add(task1);
+        int taskID = task1.getId();
+        historyManager.removeFromHistory(taskID);
+        List<Task> historyList = historyManager.getHistory();
+        List<Integer> taskIdList = new ArrayList<>();
+        for (Task task : historyList) {
+            taskIdList.add(task.getId());
+        }
+        assertFalse(taskIdList.contains(taskID));
+    }
+
+    @Test
+    public void noIDOfDeletedSubtasksInEpic() {
+        Epic epic1 = new Epic("Epic1", "Эпичный эпик");
+        taskManager.addEpic(epic1);
+        int IdOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Эпичная подзадача", IdOfEpic1);
+        taskManager.addSubtask(subtask1);
+        int IdOfSubtask1 = subtask1.getId();
+        Subtask subtask2 = new Subtask("Subtask2", "Бесполезная подзадача", IdOfEpic1);
+        taskManager.addSubtask(subtask2);
+        int IdOfSubtask2 = subtask2.getId();
+
+        taskManager.removeSubtask(IdOfSubtask2);
+        assertFalse(epic1.getIDOfSubtasks().contains(IdOfSubtask2));
+    }
+
+    @Test
+    public void taskFieldsUpdatedInManager() {
+        Task task1 = new Task("Task1", "ФЗ спринта 6");
+        taskManager.addTask(task1);
+        task1.setName("Task 1*");
+        task1.setDescription("ФЗ спринта 6 очень сложное");
+        taskManager.updateTask(task1);
+        task1 = taskManager.getTaskById(task1.getId());
+        assertEquals(task1.getName(), "Task 1*");
+        assertEquals(task1.getDescription(), "ФЗ спринта 6 очень сложное");
     }
 }

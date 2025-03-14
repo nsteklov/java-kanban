@@ -81,6 +81,16 @@ public class Main {
         for (int i = historyList.size(); i >= 1; i--) {
             System.out.println(historyList.get(i - 1));
         }
+
+        taskManager.removeTask(idTask2);
+        taskManager.removeEpic(idEpic1);
+
+        System.out.println();
+
+        historyList = historyManager.getHistory();
+        for (int i = historyList.size(); i >= 1; i--) {
+            System.out.println(historyList.get(i - 1));
+        }
        /* inMemoryTaskManager.removeSubtask(subtask3.getId());
         listOfSubtasks = inMemoryTaskManager.getSubtasks();
         System.out.println(listOfSubtasks);
