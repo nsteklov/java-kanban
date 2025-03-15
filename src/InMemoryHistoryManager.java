@@ -4,20 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    //List<Node> taskHistory = new ArrayList<>();
+
     Map<Integer, Node> mapOfNodes = new HashMap<>();
     private Node head;
     private Node tail;
 
     @Override
     public void add(Task task) {
-/*      if (taskHistory.size() == 10) {
-            taskHistory.remove(0);
-        }
-        taskHistory.add(task.copy());*/
+
         Task taskCopy = task.copy();
         Integer taskId = taskCopy.getId();
-        removeFromHistory(taskId);
+        remove(taskId);
         Node oldTail = tail;
         Node newNode = new Node(oldTail, taskCopy, null);
         tail = newNode;
@@ -31,7 +28,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void removeFromHistory(int id) {
+    public void remove(int id) {
         Node node = mapOfNodes.get(id);
         if (node == null) {
             return;
@@ -56,7 +53,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        //return taskHistory;
+
         ArrayList<Task> listOfTasks = new ArrayList<>();
         Node node = head;
         while (node != null) {
@@ -67,23 +64,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         return listOfTasks;
     }
 
-/*    public void linkLast(Task task) {
-        final Node oldTail = tail;
-        final Node newNode = new Node(oldTail, task, null);
-        tail = newNode;
-        if (oldTail == null)
-            head = newNode;
-        else
-            oldTail.next = newNode;
-
-         taskHistory.put(task.getId(), newNode);
-    }*/
-
-    //public ArrayList<Task> getTasks() {
-    //    ArrayList<Task> listOfTasks = new ArrayList<>();
-    //    for (Node node : taskHistory.values()) {
-    //        listOfTasks.add(node.task);
-    //    }
-    //}
 
 }

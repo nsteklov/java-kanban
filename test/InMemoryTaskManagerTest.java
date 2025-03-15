@@ -169,7 +169,7 @@ public class InMemoryTaskManagerTest {
         taskManager.addTask(task1);
         historyManager.add(task1);
         int taskID = task1.getId();
-        historyManager.removeFromHistory(taskID);
+        historyManager.remove(taskID);
         List<Task> historyList = historyManager.getHistory();
         List<Integer> taskIdList = new ArrayList<>();
         for (Task task : historyList) {

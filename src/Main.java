@@ -45,14 +45,9 @@ public class Main {
         listOfTasks = taskManager.getTasks();
         System.out.println(listOfTasks);
 
-/*        inMemoryTaskManager.removeTask(task2.getId());
-        listOfTasks = inMemoryTaskManager.getTasks();
-        System.out.println(listOfTasks);*/
-
         subtask1.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask1);
         System.out.println(listOfSubtasks);
-        //taskManager.removeSubtasks();
         System.out.println(listOfEpics);
 
         System.out.println();
@@ -91,14 +86,5 @@ public class Main {
         for (int i = historyList.size(); i >= 1; i--) {
             System.out.println(historyList.get(i - 1));
         }
-       /* inMemoryTaskManager.removeSubtask(subtask3.getId());
-        listOfSubtasks = inMemoryTaskManager.getSubtasks();
-        System.out.println(listOfSubtasks);
-
-        inMemoryTaskManager.removeEpic(epic1.getId());
-        listOfEpics = inMemoryTaskManager.getEpics();
-        listOfSubtasks = inMemoryTaskManager.getSubtasks();
-        System.out.println(listOfSubtasks);
-        System.out.println(listOfEpics);*/
     }
 }
