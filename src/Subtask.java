@@ -1,14 +1,14 @@
 class Subtask extends Task {
 
-    private int IDOfEpic;
+    private int iDOfEpic;
 
-    public Subtask(String name, String description, int IDOfEpic) {
+    public Subtask(String name, String description, int iDOfEpic) {
         super(name, description);
-        this.IDOfEpic = IDOfEpic;
+        this.iDOfEpic = iDOfEpic;
     }
 
     public int getIDOfEpic() {
-        return IDOfEpic;
+        return iDOfEpic;
     }
 
 
@@ -26,7 +26,7 @@ class Subtask extends Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 ", id=" + id +
-                ", IDOfEpic=" + IDOfEpic +
+                ", IDOfEpic=" + iDOfEpic +
                 '}';
     }
 }
