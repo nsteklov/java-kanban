@@ -1,32 +1,34 @@
 import java.util.ArrayList;
 
 class Epic extends Task {
-    private ArrayList<Integer> IDOfSubtasks;
+    private ArrayList<Integer> iDOfSubtasks;
 
 
     public Epic(String name, String description) {
         super(name, description);
-        IDOfSubtasks = new ArrayList<>();
+        iDOfSubtasks = new ArrayList<>();
     }
 
     public ArrayList<Integer> getIDOfSubtasks() {
-        return IDOfSubtasks;
+        return iDOfSubtasks;
     }
 
-    public void addIDOfSubtask(Integer IDOfSubtask) {
-        if (!IDOfSubtasks.contains(IDOfSubtask)) {
-            IDOfSubtasks.add(IDOfSubtask);
-        };
+    public void addIDOfSubtask(Integer iDOfSubtask) {
+        if (!iDOfSubtasks.contains(iDOfSubtask)) {
+            iDOfSubtasks.add(iDOfSubtask);
+        }
+        ;
     }
 
-    public void removeIDOfSubtask(Integer IDOfSubtask) {
-        if (IDOfSubtasks.contains(IDOfSubtask)) {
-            IDOfSubtasks.remove(IDOfSubtask);
-        };
+    public void removeIDOfSubtask(Integer iDOfSubtask) {
+        if (iDOfSubtasks.contains(iDOfSubtask)) {
+            iDOfSubtasks.remove(iDOfSubtask);
+        }
+        ;
     }
 
     public void removeSubtasks() {
-        IDOfSubtasks.clear();
+        iDOfSubtasks.clear();
     }
 
     public Epic copy() {
@@ -46,7 +48,7 @@ class Epic extends Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 ", id=" + id +
-                ", IDOfSubtasks=" + IDOfSubtasks +
+                ", IDOfSubtasks=" + iDOfSubtasks +
                 '}';
     }
 }
