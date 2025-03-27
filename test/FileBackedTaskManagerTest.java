@@ -1,18 +1,26 @@
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryTaskManagerTest {
-    private static TaskManager taskManager;
+import java.io.File;
+import java.io.FileWriter;
+
+public class FileBackedTaskManagerTest {
+    private static FileBackedTaskManager taskManager;
     private static HistoryManager historyManager;
 
-    @BeforeAll
-    public static void newManagers() {
-        taskManager = new InMemoryTaskManager();
+    @BeforeEach
+    public void newManagers() {
+        taskManager = new FileBackedTaskManager();
         historyManager = Managers.getDefaultHistory();
     }
 
@@ -204,5 +212,64 @@ public class InMemoryTaskManagerTest {
         task1 = taskManager.getTaskById(task1.getId());
         assertEquals(task1.getName(), "Task 1*");
         assertEquals(task1.getDescription(), "ФЗ спринта 6 очень сложное");
+    }
+
+    @Test
+    public void emptyFileLoadedEmptyFileBackedTaskManagerCreated() {
+        File file = null;
+
+        try {
+            file = File.createTempFile("test", ".csv");
+            taskManager.setFileName(file.getAbsolutePath());
+            taskManager.save();
+            FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
+            assertNotNull(fileBackedTaskManager, "Менеджер задач не проинициализирован");
+            if (fileBackedTaskManager != null) {
+                assertEquals(fileBackedTaskManager.getTasks().size(), 0);
+                assertEquals(fileBackedTaskManager.getEpics().size(), 0);
+                assertEquals(fileBackedTaskManager.getSubtasks().size(), 0);
+            }
+        } catch (IOException e) {
+            throw new FileBackedTaskManager.ManagerSaveException(e);
+        } finally {
+            if (file != null) {
+                file.delete();
+            }
+        }
+    }
+
+    @Test
+    public void tasksSavedInFile() {
+        Task task1 = new Task("Task1", "Таск первый");
+        taskManager.addTask(task1);
+        Task task2 = new Task("Task2", "Таск второй");
+        taskManager.addTask(task2);
+        Epic epic1 = new Epic("Epic1", "Очень эпичный эпик");
+        taskManager.addEpic(epic1);
+        int idOfEpic1 = epic1.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", idOfEpic1);
+        taskManager.addSubtask(subtask1);
+
+        File file = null;
+
+        try {
+            file = File.createTempFile("test", ".csv");
+            taskManager.setFileName(file.getAbsolutePath());
+            taskManager.save();
+            FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
+            assertNotNull(fileBackedTaskManager, "Менеджер задач не проинициализирован");
+            if (fileBackedTaskManager != null) {
+                assertEquals(fileBackedTaskManager.getTasks().size(), 2);
+                assertEquals(fileBackedTaskManager.getEpics().size(), 1);
+                assertEquals(fileBackedTaskManager.getSubtasks().size(), 1);
+            }
+        } catch (IOException e) {
+            throw new FileBackedTaskManager.ManagerSaveException(e);
+        } finally {
+            if (file != null) {
+                file.delete();
+            }
+        }
+
     }
 }
