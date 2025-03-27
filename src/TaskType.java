@@ -1,4 +1,4 @@
-public enum taskType {
+public enum TaskType {
     TASK,
     EPIC,
     SUBTASK
