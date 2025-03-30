@@ -12,6 +12,21 @@ import java.util.ArrayList;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private String fileName;
 
+    public static void main(String[] args) {
+        Path filePath = Paths.get("C:\\Users\\Java\\java-kanban\\java-kanban\\tasksForLoad.csv");
+        File file = filePath.toFile();
+        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
+
+        ArrayList<Task> listOfTasks = fileBackedTaskManager.getTasks();
+        System.out.println(listOfTasks);
+
+        ArrayList<Epic> listOfEpics = fileBackedTaskManager.getEpics();
+        System.out.println(listOfEpics);
+
+        ArrayList<Subtask> listOfSubtasks = fileBackedTaskManager.getSubtasks();
+        System.out.println(listOfSubtasks);
+    }
+
     public static class ManagerSaveException extends RuntimeException {
         public ManagerSaveException(Throwable e) {
             super(e);
@@ -30,6 +45,46 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public static FileBackedTaskManager loadFromFile(File file) {
+
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager();
+        boolean firstLine = true;
+        int maxID = 0;
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            while (fileReader.ready()) {
+                String data = fileReader.readLine();
+                if (firstLine) {
+                    firstLine = false;
+                    continue;
+                }
+                Task task = fromString(data);
+                if (task instanceof Epic) {
+                    fileBackedTaskManager.updateEpic((Epic) task);
+                } else if (task instanceof Subtask) {
+                    Subtask subtask = (Subtask) task;
+                    Integer iDOfSubtask = subtask.getId();
+                    Integer iDOfEpic = subtask.getIDOfEpic();
+                    Epic epic = fileBackedTaskManager.getEpicById(iDOfEpic);
+                    if (epic != null) {
+                        epic.addIDOfSubtask(iDOfSubtask);
+                    }
+                    fileBackedTaskManager.updateSubtask((Subtask) task);
+                } else {
+                    fileBackedTaskManager.updateTask(task);
+                }
+                int idOfTask = task.getId();
+                if (idOfTask > maxID) {
+                    maxID = idOfTask;
+                }
+            }
+            fileBackedTaskManager.setID(maxID);
+        } catch (IOException e) {
+            throw new ManagerSaveException(e);
+        }
+
+        return fileBackedTaskManager;
     }
 
     @Override
@@ -104,7 +159,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-    public void save() {
+    private void save() {
         if (fileName.isBlank()) {
             return;
         }
@@ -124,7 +179,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static String toString(Task task) {
+    private static String toString(Task task) {
         String string = "";
         if (task instanceof Epic) {
             string = task.getId() + "," + "EPIC," + task.getName() + "," + task.getStatus() + "," + task.getDescription();
@@ -136,47 +191,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return string;
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
-
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager();
-        boolean firstLine = true;
-        int maxID = 0;
-        try (BufferedReader fileReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            while (fileReader.ready()) {
-                String data = fileReader.readLine();
-                if (firstLine) {
-                    firstLine = false;
-                    continue;
-                }
-                Task task = fromString(data);
-                if (task instanceof Epic) {
-                    fileBackedTaskManager.updateEpic((Epic) task);
-                } else if (task instanceof Subtask) {
-                    Subtask subtask = (Subtask) task;
-                    Integer iDOfSubtask = subtask.getId();
-                    Integer iDOfEpic = subtask.getIDOfEpic();
-                    Epic epic = fileBackedTaskManager.getEpicById(iDOfEpic);
-                    if (epic != null) {
-                        epic.addIDOfSubtask(iDOfSubtask);
-                    }
-                    fileBackedTaskManager.updateSubtask((Subtask) task);
-                } else {
-                    fileBackedTaskManager.updateTask(task);
-                }
-                int idOfTask = task.getId();
-                if (idOfTask > maxID) {
-                    maxID = idOfTask;
-                }
-            }
-            fileBackedTaskManager.setID(maxID);
-        } catch (IOException e) {
-            throw new ManagerSaveException(e);
-        }
-
-        return fileBackedTaskManager;
-    }
-
-    public static Task fromString(String value) {
+    private static Task fromString(String value) {
         String[] split = value.split(",", 6);
         int id = Integer.parseInt(split[0]);
         String type = split[1];
@@ -200,20 +215,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             task.setStatus(status);
             return task;
         }
-    }
-
-    public static void main(String[] args) {
-        Path filePath = Paths.get("C:\\Users\\Java\\java-kanban\\java-kanban\\tasksForLoad.csv");
-        File file = filePath.toFile();
-        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
-
-        ArrayList<Task> listOfTasks = fileBackedTaskManager.getTasks();
-        System.out.println(listOfTasks);
-
-        ArrayList<Epic> listOfEpics = fileBackedTaskManager.getEpics();
-        System.out.println(listOfEpics);
-
-        ArrayList<Subtask> listOfSubtasks = fileBackedTaskManager.getSubtasks();
-        System.out.println(listOfSubtasks);
     }
 }

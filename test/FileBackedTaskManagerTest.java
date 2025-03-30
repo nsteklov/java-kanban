@@ -221,7 +221,6 @@ public class FileBackedTaskManagerTest {
         try {
             file = File.createTempFile("test", ".csv");
             taskManager.setFileName(file.getAbsolutePath());
-            taskManager.save();
             FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
             assertNotNull(fileBackedTaskManager, "Менеджер задач не проинициализирован");
             if (fileBackedTaskManager != null) {
@@ -240,6 +239,14 @@ public class FileBackedTaskManagerTest {
 
     @Test
     public void tasksSavedInFile() {
+        File file = null;
+
+        try {
+            file = File.createTempFile("test", ".csv");
+            taskManager.setFileName(file.getAbsolutePath());
+        } catch (IOException e) {
+            throw new FileBackedTaskManager.ManagerSaveException(e);
+        }
         Task task1 = new Task("Task1", "Таск первый");
         taskManager.addTask(task1);
         Task task2 = new Task("Task2", "Таск второй");
@@ -250,26 +257,15 @@ public class FileBackedTaskManagerTest {
         Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", idOfEpic1);
         taskManager.addSubtask(subtask1);
 
-        File file = null;
-
-        try {
-            file = File.createTempFile("test", ".csv");
-            taskManager.setFileName(file.getAbsolutePath());
-            taskManager.save();
-            FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
-            assertNotNull(fileBackedTaskManager, "Менеджер задач не проинициализирован");
-            if (fileBackedTaskManager != null) {
-                assertEquals(fileBackedTaskManager.getTasks().size(), 2);
-                assertEquals(fileBackedTaskManager.getEpics().size(), 1);
-                assertEquals(fileBackedTaskManager.getSubtasks().size(), 1);
-            }
-        } catch (IOException e) {
-            throw new FileBackedTaskManager.ManagerSaveException(e);
-        } finally {
-            if (file != null) {
-                file.delete();
-            }
+        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
+        assertNotNull(fileBackedTaskManager, "Менеджер задач не проинициализирован");
+        if (fileBackedTaskManager != null) {
+            assertEquals(fileBackedTaskManager.getTasks().size(), 2);
+            assertEquals(fileBackedTaskManager.getEpics().size(), 1);
+            assertEquals(fileBackedTaskManager.getSubtasks().size(), 1);
         }
-
+        if (file != null) {
+            file.delete();
+        }
     }
 }
