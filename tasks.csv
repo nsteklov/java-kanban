@@ -1,0 +1,4 @@
+id,type,name,status,description,epic
+1,TASK,Task1,IN_PROGRESS,Пою
+6,EPIC,Epic2,NEW,Идти в спортзал
+7,SUBTASK,Subtask3,NEW,Поднять гантели,6

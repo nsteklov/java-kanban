@@ -203,6 +203,10 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager;
     }
 
+    public void setID(int id) {
+        this.id = id;
+    }
+
     private int generateId() {
         id++;
         return id;

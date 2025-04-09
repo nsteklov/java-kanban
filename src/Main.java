@@ -5,6 +5,9 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
+        if (taskManager instanceof FileBackedTaskManager) {
+            ((FileBackedTaskManager) taskManager).setFileName("C:\\Users\\Java\\java-kanban\\java-kanban\\tasks.csv");
+        }
         HistoryManager historyManager = taskManager.getHistoryManager();
 
         Task task1 = new Task("Task1", "Петь");
