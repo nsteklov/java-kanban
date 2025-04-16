@@ -7,7 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.File;
 import java.io.BufferedReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.time.Duration;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private String fileName;
@@ -70,6 +72,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     if (epic != null) {
                         epic.addIDOfSubtask(iDOfSubtask);
                     }
+                    fileBackedTaskManager.updateEpic(epic);
                     fileBackedTaskManager.updateSubtask((Subtask) task);
                 } else {
                     fileBackedTaskManager.updateTask(task);
@@ -181,36 +184,69 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private static String toString(Task task) {
         String string = "";
+        String startTimeString = "";
+        long durationMinutes = 0;
+        LocalDateTime startTime = task.getStartTime();
+        if (startTime != null) {
+            startTimeString = startTime.toString();
+        }
+        Duration duration = task.getDuration();
+        if (duration != null) {
+            durationMinutes = duration.toMinutes();
+        }
         if (task instanceof Epic) {
-            string = task.getId() + "," + "EPIC," + task.getName() + "," + task.getStatus() + "," + task.getDescription();
+            String endTimeString = "";
+            LocalDateTime endTime = task.getEndTime();
+            if (endTime != null) {
+                endTimeString = endTime.toString();
+            }
+            string = task.getId() + "," + "EPIC," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + startTimeString + "," + durationMinutes + "," + endTimeString;
         } else if (task instanceof Subtask) {
-            string = task.getId() + "," + "SUBTASK," + task.getName() + "," + task.getStatus() + "," + task.getDescription() +  "," + ((Subtask) task).getIDOfEpic();
+            string = task.getId() + "," + "SUBTASK," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + startTimeString + "," + durationMinutes + "," + ((Subtask) task).getIDOfEpic();
         } else {
-            string = task.getId() + "," + "TASK," + task.getName() + "," + task.getStatus() + "," + task.getDescription();
+            string = task.getId() + "," + "TASK," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + startTimeString + "," + durationMinutes;
         }
         return string;
     }
 
     private static Task fromString(String value) {
-        String[] split = value.split(",", 6);
+        String[] split = value.split(",", 8);
         int id = Integer.parseInt(split[0]);
         String type = split[1];
         String name = split[2];
         Status status = Status.valueOf(split[3]);
         String description = split[4];
+        String startTimeString = split[5];
+        Duration duration = Duration.ofMinutes(Long.parseLong(split[6]));
         if (type.equals("EPIC")) {
+            String endTimeString = split[7];
             Epic epic = new Epic(name, description);
+            if (!startTimeString.isBlank()) {
+                epic.setStartTime(LocalDateTime.parse(startTimeString));
+            }
+            if (!endTimeString.isBlank()) {
+                epic.setEndTime(LocalDateTime.parse(endTimeString));
+            }
+            epic.setDuration(duration);
             epic.setId(id);
             epic.setStatus(status);
             return epic;
         } else if (type.equals("SUBTASK")) {
-            int idOfEpic = Integer.parseInt(split[5]);
-            Subtask subtask = new Subtask(name, description, idOfEpic);
+            int idOfEpic = Integer.parseInt(split[7]);
+            Subtask subtask = new Subtask(name, description, duration, idOfEpic);
+            if (!startTimeString.isBlank()) {
+                subtask.setStartTime(LocalDateTime.parse(startTimeString));
+            }
+            subtask.setDuration(duration);
             subtask.setId(id);
             subtask.setStatus(status);
             return subtask;
         } else {
-            Task task = new Task(name, description);
+            Task task = new Task(name, description, duration);
+            if (!startTimeString.isBlank()) {
+                task.setStartTime(LocalDateTime.parse(startTimeString));
+            }
+            task.setDuration(duration);
             task.setId(id);
             task.setStatus(status);
             return task;
