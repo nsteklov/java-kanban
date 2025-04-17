@@ -15,19 +15,6 @@ public class InMemoryTaskManager implements TaskManager {
     private HistoryManager historyManager;
     private TreeSet<Task> prioritizedTasks;
 
-    Comparator<Task> taskComparator = new Comparator<Task>() {
-        @Override
-        public int compare(Task o1, Task o2) {
-            if (o1.getStartTime().isAfter(o2.getStartTime())) {
-                return 1;
-            } else if (o1.getStartTime().isBefore(o2.getStartTime())) {
-                return -1;
-            } else {
-                return 0;
-            }
-        }
-    };
-
     public class IntersectionException extends Exception {
         public IntersectionException(final String message) {
             super(message);
@@ -39,7 +26,15 @@ public class InMemoryTaskManager implements TaskManager {
         epics = new HashMap<>();
         subtasks = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
-        prioritizedTasks = new TreeSet<>(taskComparator);
+        prioritizedTasks = new TreeSet<>((o1, o2) -> {
+            if (o1.getStartTime().isAfter(o2.getStartTime())) {
+                return 1;
+            } else if (o1.getStartTime().isBefore(o2.getStartTime())) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     @Override
@@ -300,7 +295,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean checkIntersection(Task task1, Task task2) {
+    public boolean checkIntersections(Task task) {
+        for (Task currentTask : tasks.values()) {
+            if (currentTask == task) {
+                continue;
+            }
+            if (checkIntersection(task, currentTask)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkIntersection(Task task1, Task task2) {
         LocalDateTime startTime1 = task1.getStartTime();
         LocalDateTime startTime2 = task2.getStartTime();
         if (startTime1 == null || startTime2 == null) {
@@ -312,19 +319,6 @@ public class InMemoryTaskManager implements TaskManager {
                 || endTime1.isAfter(startTime2) && endTime1.isBefore(endTime2)
                 || startTime2.isAfter(startTime1) && startTime2.isBefore(endTime1)
                 || endTime2.isAfter(startTime1) && endTime2.isBefore(endTime1);
-    }
-
-    @Override
-    public boolean checkIntersections(Task task) {
-        for (Task currentTask : tasks.values()) {
-            if (currentTask == task) {
-                continue;
-            }
-            if (checkIntersection(task, currentTask)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private int generateId() {
