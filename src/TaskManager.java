@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public interface TaskManager {
     ArrayList<Task> getTasks();
@@ -39,5 +40,11 @@ public interface TaskManager {
 
     void removeSubtask(Integer id);
 
-    public HistoryManager getHistoryManager();
+    HistoryManager getHistoryManager();
+
+    TreeSet<Task> getPrioritizedTasks();
+
+    boolean checkIntersections(Task task);
 }
+
+

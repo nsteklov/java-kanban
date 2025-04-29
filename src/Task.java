@@ -1,14 +1,27 @@
 import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Task {
     protected String name;
     protected String description;
     protected Status status;
     protected int id;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, Duration duration) {
         this.name = name;
         this.description = description;
+        this.duration = duration;
+    }
+
+    public Task(String name, String description, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public void setId(int id) {
@@ -43,8 +56,32 @@ public class Task {
         this.description = description;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null) {
+            return null;
+        } else {
+            return startTime.plus(duration);
+        }
+    }
+
     public Task copy() {
-        Task taskCopy = new Task(this.getName(), this.getDescription());
+        Task taskCopy = new Task(this.getName(), this.getDescription(), this.getDuration(), this.getStartTime());
         taskCopy.setId(this.getId());
         taskCopy.setStatus(this.getStatus());
         return taskCopy;
@@ -67,9 +104,25 @@ public class Task {
 
     @Override
     public String toString() {
+        String startTimeFormatted = "";
+        if (startTime != null) {
+            startTimeFormatted = startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm"));
+        }
+        String endTimeFormatted = "";
+        LocalDateTime endTime = getEndTime();
+        if (endTime != null) {
+            endTimeFormatted = endTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm"));
+        }
+        long durationMinutes = 0;
+        if (duration != null) {
+            durationMinutes = duration.toMinutes();
+        }
         return "Task{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", start time='" + startTimeFormatted + '\'' +
+                ", duration='" + durationMinutes + '\'' +
+                ", end time='" + endTimeFormatted + '\'' +
                 ", status=" + status +
                 ", id=" + id +
                 '}';
