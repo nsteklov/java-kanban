@@ -16,29 +16,29 @@ public interface TaskManager {
 
     void removeSubtasks();
 
-    Task getTaskById(Integer id);
+    Task getTaskById(Integer id) throws NotFoundException;
 
-    Epic getEpicById(Integer id);
+    Epic getEpicById(Integer id) throws NotFoundException;
 
-    Subtask getSubtaskById(Integer id);
+    Subtask getSubtaskById(Integer id) throws NotFoundException;
 
-    void addTask(Task task);
+    void addTask(Task task) throws InMemoryTaskManager.IntersectionException;
 
     void addEpic(Epic epic);
 
-    void addSubtask(Subtask subtask);
+    void addSubtask(Subtask subtask) throws InMemoryTaskManager.IntersectionException, NotFoundException;
 
-    void updateTask(Task task);
+    void updateTask(Task task) throws InMemoryTaskManager.IntersectionException;
 
     void updateEpic(Epic epic);
 
-    void updateSubtask(Subtask subtask);
+    void updateSubtask(Subtask subtask) throws InMemoryTaskManager.IntersectionException, NotFoundException;
 
-    void removeTask(Integer id);
+    void removeTask(Integer id) throws NotFoundException;
 
-    void removeEpic(Integer id);
+    void removeEpic(Integer id) throws NotFoundException;
 
-    void removeSubtask(Integer id);
+    void removeSubtask(Integer id) throws NotFoundException;
 
     HistoryManager getHistoryManager();
 
