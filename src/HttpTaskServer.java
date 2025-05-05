@@ -6,9 +6,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 public class HttpTaskServer {
     private static final int PORT = 8080;
 
