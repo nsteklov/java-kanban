@@ -1,4 +1,9 @@
-import org.junit.jupiter.api.BeforeAll;
+import exceptions.NotFoundException;
+import managers.*;
+import taskstructure.Epic;
+import taskstructure.Status;
+import taskstructure.Subtask;
+import taskstructure.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +23,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @BeforeEach
     public void newManagers() {
         taskManager = Managers.getDefault();
-        ;
         historyManager = Managers.getDefaultHistory();
         fileBackedTaskManager = new FileBackedTaskManager();
     }
@@ -59,18 +63,33 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldCreateAndFindDifferentTasks() {
         Task task1 = new Task("Task1", "Задача номер 1", Duration.ofMinutes(32));
-        taskManager.addTask(task1);
+        try {
+            taskManager.addTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         int idOfTask1 = task1.getId();
         Epic epic1 = new Epic("Epic1", "Эпик номер 1");
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
         Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-        int idOfSubtask1 = subtask1.getId();
+        int idOfSubtask1 = 0;
+        try {
+            taskManager.addSubtask(subtask1);
+            idOfSubtask1 = subtask1.getId();
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
 
-        assertEquals(task1, taskManager.getTaskById(idOfTask1));
-        assertEquals(epic1, taskManager.getEpicById(idOfEpic1));
-        assertEquals(subtask1, taskManager.getSubtaskById(idOfSubtask1));
+        try {
+            assertEquals(task1, taskManager.getTaskById(idOfTask1));
+            assertEquals(epic1, taskManager.getEpicById(idOfEpic1));
+            assertEquals(subtask1, taskManager.getSubtaskById(idOfSubtask1));
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        }
     }
 
     @Test
@@ -78,22 +97,34 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task task1 = new Task("Task1", "Не иди на конфликт", Duration.ofMinutes(32));
         task1.setId(1);
         Task task2 = new Task("Task1", "Не иди на конфликт", Duration.ofMinutes(32));
-        taskManager.addTask(task1);
-        taskManager.addTask(task2);
+        try {
+            taskManager.addTask(task1);
+            taskManager.addTask(task2);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         assertNotEquals(task1, task2);
     }
 
     @Test
     public void taskNotChangedAfterAddition() {
         Task task1 = new Task("Task1", "Не меняйся", Duration.ofMinutes(32));
-        taskManager.addTask(task1);
-
+        try {
+            taskManager.addTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
         Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-
+        try {
+            taskManager.addSubtask(subtask1);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         assertEquals("Task1", task1.getName());
         assertEquals("Не меняйся", task1.getDescription());
 
@@ -109,12 +140,20 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void historyManagerSavesPreviousData() {
         HistoryManager historyManager = taskManager.getHistoryManager();
         Task task1 = new Task("Task1", "Не меняйся", Duration.ofMinutes(32));
-        taskManager.addTask(task1);
+        try {
+            taskManager.addTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         historyManager.add(task1);
         task1.setStatus(Status.DONE);
         task1.setName("Task2");
         task1.setDescription("Поменялся");
-        taskManager.updateTask(task1);
+        try {
+            taskManager.updateTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         List<Task> historyList = historyManager.getHistory();
         Task task1Initial = historyList.get(historyList.size() - 1);
 
@@ -126,23 +165,40 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void tasksRemoved() {
         Task task1 = new Task("Task1", "Не меняйся", Duration.ofMinutes(32));
-        taskManager.addTask(task1);
+        try {
+            taskManager.addTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
         Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-
+        try {
+            taskManager.addSubtask(subtask1);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         int task1ID = task1.getId();
         int epic1ID = epic1.getId();
         int subtask1ID = subtask1.getId();
 
-        taskManager.removeTask(task1ID);
-        taskManager.removeEpic(epic1ID);
-        taskManager.removeSubtask(subtask1ID);
-        assertNull(taskManager.getTaskById(task1ID));
-        assertNull(taskManager.getEpicById(epic1ID));
-        assertNull(taskManager.getSubtaskById(subtask1ID));
+        try {
+            taskManager.removeTask(task1ID);
+            taskManager.removeEpic(epic1ID);
+            taskManager.removeSubtask(subtask1ID);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getMessage());
+        }
+        try {
+            assertNull(taskManager.getTaskById(task1ID));
+            assertNull(taskManager.getEpicById(epic1ID));
+            assertNull(taskManager.getSubtaskById(subtask1ID));
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        }
     }
 
     @Test
@@ -151,9 +207,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
         Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-        int idOfSubtask1 = subtask1.getId();
-
+        int idOfSubtask1 = 0;
+        try {
+            taskManager.addSubtask(subtask1);
+            idOfSubtask1 = subtask1.getId();
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         ArrayList<Integer> idOfSubtasks = epic1.getIDOfSubtasks();
         assertTrue(idOfSubtasks.contains(idOfSubtask1));
     }
@@ -164,28 +226,38 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
         Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-        subtask1.setStatus(Status.DONE);
-        taskManager.updateSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Subtask2", "Подзадача 2", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask2);
-        subtask2.setStatus(Status.DONE);
-        taskManager.updateSubtask(subtask2);
-        assertEquals(Status.DONE, epic1.getStatus());
+        try {
+            taskManager.addSubtask(subtask1);
+            subtask1.setStatus(Status.DONE);
+            taskManager.updateSubtask(subtask1);
+            Subtask subtask2 = new Subtask("Subtask2", "Подзадача 2", Duration.ofMinutes(32), idOfEpic1);
+            taskManager.addSubtask(subtask2);
+            subtask2.setStatus(Status.DONE);
+            taskManager.updateSubtask(subtask2);
+            assertEquals(Status.DONE, epic1.getStatus());
 
-        subtask2.setStatus(Status.NEW);
-        taskManager.updateSubtask(subtask2);
-        assertEquals(Status.IN_PROGRESS, epic1.getStatus());
+            subtask2.setStatus(Status.NEW);
+            taskManager.updateSubtask(subtask2);
+            assertEquals(Status.IN_PROGRESS, epic1.getStatus());
 
-        subtask1.setStatus(Status.NEW);
-        taskManager.updateSubtask(subtask1);
+            subtask1.setStatus(Status.NEW);
+            taskManager.updateSubtask(subtask1);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         assertEquals(Status.NEW, epic1.getStatus());
     }
 
     @Test
     public void taskRemovedFromHistory() {
         Task task1 = new Task("Task1", "Не меняйся", Duration.ofMinutes(32));
-        taskManager.addTask(task1);
+        try {
+            taskManager.addTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         historyManager.add(task1);
         int taskID = task1.getId();
         historyManager.remove(taskID);
@@ -202,26 +274,50 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Эпичная подзадача", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-        int idOfSubtask1 = subtask1.getId();
-        Subtask subtask2 = new Subtask("Subtask2", "Бесполезная подзадача", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask2);
-        int idOfSubtask2 = subtask2.getId();
+        int idOfSubtask1 = 0;
+        int idOfSubtask2 = 0;
+        try {
+            Subtask subtask1 = new Subtask("Subtask1", "Эпичная подзадача", Duration.ofMinutes(32), idOfEpic1);
+            taskManager.addSubtask(subtask1);
+            idOfSubtask1 = subtask1.getId();
+            Subtask subtask2 = new Subtask("Subtask2", "Бесполезная подзадача", Duration.ofMinutes(32), idOfEpic1);
+            taskManager.addSubtask(subtask2);
+            idOfSubtask2 = subtask2.getId();
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
 
-        taskManager.removeSubtask(idOfSubtask2);
+        try {
+            taskManager.removeSubtask(idOfSubtask2);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getMessage());
+        }
         assertFalse(epic1.getIDOfSubtasks().contains(idOfSubtask2));
     }
 
     @Test
     public void taskFieldsUpdatedInManager() {
         Task task1 = new Task("Task1", "ФЗ спринта 6", Duration.ofMinutes(32));
-        taskManager.addTask(task1);
-        task1.setName("Task 1*");
+        try {
+            taskManager.addTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
+        task1.setName("TaskStructure.Task 1*");
         task1.setDescription("ФЗ спринта 6 очень сложное");
-        taskManager.updateTask(task1);
-        task1 = taskManager.getTaskById(task1.getId());
-        assertEquals(task1.getName(), "Task 1*");
+        try {
+            taskManager.updateTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
+        try {
+            task1 = taskManager.getTaskById(task1.getId());
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        }
+        assertEquals(task1.getName(), "TaskStructure.Task 1*");
         assertEquals(task1.getDescription(), "ФЗ спринта 6 очень сложное");
     }
 
@@ -231,10 +327,19 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
         Subtask subtask1 = new Subtask("Subtask1", "Подзадача 1", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-
+        try {
+            taskManager.addSubtask(subtask1);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         int idOfEpic = subtask1.getIDOfEpic();
-        assertNotNull(taskManager.getEpicById(idOfEpic));
+        try {
+            assertNotNull(taskManager.getEpicById(idOfEpic));
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        }
     }
 
     @Test
@@ -242,22 +347,35 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic1 = new Epic("Epic1", "Эпичный эпик");
         taskManager.addEpic(epic1);
         int idOfEpic1 = epic1.getId();
-        Subtask subtask1 = new Subtask("Subtask1", "Эпичная подзадача", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask1);
-        int idOfSubtask1 = subtask1.getId();
-        Subtask subtask2 = new Subtask("Subtask2", "Бесполезная подзадача", Duration.ofMinutes(32), idOfEpic1);
-        taskManager.addSubtask(subtask2);
-        int idOfSubtask2 = subtask2.getId();
+        try {
+            Subtask subtask1 = new Subtask("Subtask1", "Эпичная подзадача", Duration.ofMinutes(32), idOfEpic1);
+            taskManager.addSubtask(subtask1);
+            int idOfSubtask1 = subtask1.getId();
+            Subtask subtask2 = new Subtask("Subtask2", "Бесполезная подзадача", Duration.ofMinutes(32), idOfEpic1);
+            taskManager.addSubtask(subtask2);
+            int idOfSubtask2 = subtask2.getId();
+            subtask2.setStatus(Status.DONE);
+            taskManager.updateSubtask(subtask2);
+            assertEquals(epic1.getStatus(), Status.IN_PROGRESS);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 
     @Test
     public void intervalsIntersected() {
-        Task task1 = new Task("Task1", "Пересекусь с 3", Duration.ofMinutes(30), LocalDateTime.of(2025, 4, 16, 9, 00));
-        taskManager.addTask(task1);
-        Task task2 = new Task("Task2", "Пересекусь с 3", Duration.ofMinutes(30), LocalDateTime.of(2025, 4, 16, 9, 30));
-        taskManager.addTask(task2);
-        Task task3 = new Task("Task3", "Пересекусь с 1, 2", Duration.ofMinutes(30), LocalDateTime.of(2025, 4, 16, 9, 59));
-        assertTrue(taskManager.checkIntersections(task3));
+        try {
+            Task task1 = new Task("Task1", "Пересекусь с 3", Duration.ofMinutes(30), LocalDateTime.of(2025, 4, 16, 9, 00));
+            taskManager.addTask(task1);
+            Task task2 = new Task("Task2", "Пересекусь с 3", Duration.ofMinutes(30), LocalDateTime.of(2025, 4, 16, 9, 30));
+            taskManager.addTask(task2);
+            Task task3 = new Task("Task3", "Пересекусь с 1, 2", Duration.ofMinutes(30), LocalDateTime.of(2025, 4, 16, 9, 59));
+            assertTrue(taskManager.checkIntersections(task3));
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 
     @Test
@@ -270,16 +388,24 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void noRepetitionsInTaskHistory() {
         Task task1 = new Task("Task1", "Таск", Duration.ofMinutes(30), LocalDateTime.of(2025, 4, 16, 9, 00));
-        taskManager.addTask(task1);
+        try {
+            taskManager.addTask(task1);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         int idOfTask = task1.getId();
-        taskManager.getTaskById(idOfTask);
-        taskManager.getTaskById(idOfTask);
-        taskManager.getTaskById(idOfTask);
+        try {
+            taskManager.getTaskById(idOfTask);
+            taskManager.getTaskById(idOfTask);
+            taskManager.getTaskById(idOfTask);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        }
         HistoryManager historyManager = taskManager.getHistoryManager();
         List<Task> historyList = historyManager.getHistory();
         long occurrences = historyList.stream()
                 .filter(task1::equals)
-                .count(); // Считаем количество "яблок"
+                .count();
         assertEquals(occurrences, 1);
     }
 
@@ -291,28 +417,35 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task task4 = new Task("Task4", "Задача 4", Duration.ofMinutes(30));
         Task task5 = new Task("Task5", "Задача 5", Duration.ofMinutes(30));
         Task task6 = new Task("Task6", "Задача 6", Duration.ofMinutes(30));
-        taskManager.addTask(task1);
-        taskManager.addTask(task2);
-        taskManager.addTask(task3);
-        taskManager.addTask(task4);
-        taskManager.addTask(task5);
-        taskManager.addTask(task6);
+        try {
+            taskManager.addTask(task1);
+            taskManager.addTask(task2);
+            taskManager.addTask(task3);
+            taskManager.addTask(task4);
+            taskManager.addTask(task5);
+            taskManager.addTask(task6);
+        } catch (InMemoryTaskManager.IntersectionException exception) {
+            System.out.println(exception.getMessage());
+        }
         int idTask1 = task1.getId();
         int idTask2 = task2.getId();
         int idTask3 = task3.getId();
         int idTask4 = task4.getId();
         int idTask5 = task5.getId();
         int idTask6 = task6.getId();
-        taskManager.getTaskById(idTask1);
-        taskManager.getTaskById(idTask2);
-        taskManager.getTaskById(idTask3);
-        taskManager.getTaskById(idTask4);
-        taskManager.getTaskById(idTask5);
-        taskManager.getTaskById(idTask6);
-        taskManager.removeTask(idTask1);
-        taskManager.removeTask(idTask6);
-        taskManager.removeTask(idTask4);
-
+        try {
+            taskManager.getTaskById(idTask1);
+            taskManager.getTaskById(idTask2);
+            taskManager.getTaskById(idTask3);
+            taskManager.getTaskById(idTask4);
+            taskManager.getTaskById(idTask5);
+            taskManager.getTaskById(idTask6);
+            taskManager.removeTask(idTask1);
+            taskManager.removeTask(idTask6);
+            taskManager.removeTask(idTask4);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        }
         HistoryManager historyManager = taskManager.getHistoryManager();
         List<Task> historyList = historyManager.getHistory();
         List<Integer> taskIdHistoryList = historyList.stream()

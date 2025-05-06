@@ -1,3 +1,5 @@
+package taskstructure;
+
 public class Node {
     public Task task;
     public Node prev;

@@ -1,0 +1,12 @@
+package httphandlers;
+
+public enum Endpoint {
+    GET_OBJECTS,
+    GET_OBJECT_BY_ID,
+    CREATE_UPDATE_OBJECT,
+    DELETE_OBJECT,
+    GET_EPIC_SUBTASKS,
+    GET_HISTORY,
+    GET_PRIORITIZED_TASKS,
+    UNKNOWN
+}
