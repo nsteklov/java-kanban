@@ -1,5 +1,13 @@
+package managers;
+
+import taskstructure.Epic;
+import taskstructure.Subtask;
+import taskstructure.Task;
+
+import exceptions.NotFoundException;
+
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.List;
 
 public interface TaskManager {
     ArrayList<Task> getTasks();
@@ -42,7 +50,7 @@ public interface TaskManager {
 
     HistoryManager getHistoryManager();
 
-    TreeSet<Task> getPrioritizedTasks();
+    List<Task> getPrioritizedTasks();
 
     boolean checkIntersections(Task task);
 }

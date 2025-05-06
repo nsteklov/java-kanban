@@ -1,3 +1,5 @@
+package httphandlers;
+
 public enum Endpoint {
     GET_OBJECTS,
     GET_OBJECT_BY_ID,

@@ -1,4 +1,10 @@
+import exceptions.NotFoundException;
+import managers.HistoryManager;
+import managers.Managers;
+import managers.TaskManager;
+import taskstructure.Task;
 import com.sun.net.httpserver.HttpServer;
+import httphandlers.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Set;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -53,9 +58,6 @@ public class HttpHistoryPrioritizedTest {
     class historyListTypeToken extends TypeToken<List<Task>> {
     }
 
-    class setTaskTypeToken extends TypeToken<Set<Task>> {
-    }
-
     @BeforeEach
     public void setUp() {
         manager.removeTasks();
@@ -74,12 +76,12 @@ public class HttpHistoryPrioritizedTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks");
 
-        Task task = new Task("Task 1", "Testing task 1", Duration.ofMinutes(5), LocalDateTime.now());
+        Task task = new Task("TaskStructure.Task 1", "Testing task 1", Duration.ofMinutes(5), LocalDateTime.now());
         String taskJson = gson.toJson(task);
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Task task2 = new Task("Task 2", "Testing task 2", Duration.ofMinutes(5), LocalDateTime.of(2025, 4, 15, 9, 15));
+        Task task2 = new Task("TaskStructure.Task 2", "Testing task 2", Duration.ofMinutes(5), LocalDateTime.of(2025, 4, 15, 9, 15));
         String taskJson2 = gson.toJson(task2);
         HttpRequest request2 = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson2)).build();
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
@@ -117,12 +119,12 @@ public class HttpHistoryPrioritizedTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks");
 
-        Task task = new Task("Task 1", "Testing task 1", Duration.ofMinutes(5), LocalDateTime.of(2026, 4, 15, 9, 15));
+        Task task = new Task("TaskStructure.Task 1", "Testing task 1", Duration.ofMinutes(5), LocalDateTime.of(2026, 4, 15, 9, 15));
         String taskJson = gson.toJson(task);
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Task task2 = new Task("Task 2", "Testing task 2", Duration.ofMinutes(5), LocalDateTime.of(2025, 4, 15, 9, 15));
+        Task task2 = new Task("TaskStructure.Task 2", "Testing task 2", Duration.ofMinutes(5), LocalDateTime.of(2025, 4, 15, 9, 15));
         String taskJson2 = gson.toJson(task2);
         HttpRequest request2 = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson2)).build();
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
@@ -146,9 +148,9 @@ public class HttpHistoryPrioritizedTest {
         HttpRequest requestPrioritized = HttpRequest.newBuilder().uri(urlPrioritized).GET().build();
         HttpResponse<String> responsePrioritized = client.send(requestPrioritized, HttpResponse.BodyHandlers.ofString());
         if (responsePrioritized.statusCode() == 200) {
-            Set<Task> prioritizedTasks = gson.fromJson(responsePrioritized.body(), new setTaskTypeToken().getType());
-            assertEquals(prioritizedTasks.toArray()[0], tasksFromManager.get(1));
-            assertEquals(prioritizedTasks.toArray()[1], tasksFromManager.get(0));
+            List<Task> prioritizedTasks = gson.fromJson(responsePrioritized.body(), new historyListTypeToken().getType());
+            assertEquals(prioritizedTasks.get(0), tasksFromManager.get(1));
+            assertEquals(prioritizedTasks.get(1), tasksFromManager.get(0));
         }
     }
 }

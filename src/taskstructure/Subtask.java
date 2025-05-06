@@ -1,8 +1,10 @@
+package taskstructure;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-class Subtask extends Task {
+public class Subtask extends Task {
 
     private int iDOfEpic;
 
@@ -43,7 +45,7 @@ class Subtask extends Task {
         if (duration != null) {
             durationMinutes = duration.toMinutes();
         }
-        return "Subtask{" +
+        return "TaskStructure.Subtask{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", start time='" + startTimeFormatted + '\'' +

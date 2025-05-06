@@ -1,3 +1,11 @@
+package managers;
+
+import taskstructure.Epic;
+import taskstructure.Status;
+import taskstructure.Subtask;
+import taskstructure.Task;
+import exceptions.NotFoundException;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -291,8 +299,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public TreeSet<Task> getPrioritizedTasks() {
-        return prioritizedTasks;
+    public List<Task> getPrioritizedTasks() {
+        return prioritizedTasks.stream()
+                .toList();
     }
 
     public void setID(int id) {

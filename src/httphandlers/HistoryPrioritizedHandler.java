@@ -1,10 +1,13 @@
+package httphandlers;
+
+import taskstructure.Task;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
+import managers.*;
 
 public class HistoryPrioritizedHandler extends BaseHttpHandler implements HttpHandler {
 
@@ -22,18 +25,18 @@ public class HistoryPrioritizedHandler extends BaseHttpHandler implements HttpHa
                 HistoryManager historyManager = taskManager.getHistoryManager();
                 List<Task> historyList = historyManager.getHistory();
                 Collections.reverse(historyList);
-                String response = gson.toJson(historyList);
-                writeResponse(exchange, response, 200);
+                String response = BaseHttpHandler.gson.toJson(historyList);
+                writeResponse(exchange, response, 200, true);
                 break;
             }
             case GET_PRIORITIZED_TASKS: {
-                TreeSet<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
-                String response = gson.toJson(prioritizedTasks);
-                writeResponse(exchange, response, 200);
+                List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+                String response = BaseHttpHandler.gson.toJson(prioritizedTasks);
+                writeResponse(exchange, response, 200, true);
                 break;
             }
             default:
-                writeResponse(exchange, "Эндпоинт не найден", 404);
+                writeResponse(exchange, "Эндпоинт не найден", 405, false);
         }
     }
 }

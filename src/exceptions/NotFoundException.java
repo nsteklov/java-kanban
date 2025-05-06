@@ -1,4 +1,6 @@
-public class NotFoundException extends Exception {
+package exceptions;
+
+public class NotFoundException extends RuntimeException {
     private int taskId;
 
     public NotFoundException(final String message) {

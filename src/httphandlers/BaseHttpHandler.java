@@ -1,4 +1,8 @@
+package httphandlers;
+
+import taskstructure.Epic;
 import com.sun.net.httpserver.HttpExchange;
+import managers.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -113,9 +117,12 @@ public class BaseHttpHandler {
     //могу оставить так? мне кажется, это норм решение))
     protected void writeResponse(HttpExchange exchange,
                                  String responseString,
-                                 int responseCode) throws IOException {
+                                 int responseCode,
+                                 boolean jsonResponse) throws IOException {
         try (OutputStream os = exchange.getResponseBody()) {
-            exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+            if (jsonResponse) {
+                exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+            }
             exchange.sendResponseHeaders(responseCode, 0);
             os.write(responseString.getBytes(DEFAULT_CHARSET));
         }

@@ -1,10 +1,18 @@
+import exceptions.NotFoundException;
+import managers.*;
+import taskstructure.Epic;
+import taskstructure.Subtask;
+import taskstructure.Task;
 import com.sun.net.httpserver.HttpServer;
+import httphandlers.*;
+import exceptions.NotFoundException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import managers.*;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
@@ -75,7 +83,12 @@ public class HttpTaskServer {
         String epicsJson = BaseHttpHandler.epicsJson(epics);
         System.out.println(epicsJson);
 
-        // настройка и запуск HTTP-сервера
+        startHTTPServer(taskManager);
+    }
+
+    // настройка и запуск HTTP-сервера
+    private static void startHTTPServer(TaskManager taskManager) throws IOException {
+
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         HistoryPrioritizedHandler hpHandler = new HistoryPrioritizedHandler(taskManager);
         httpServer.createContext("/tasks", new TaskHandler(taskManager));
@@ -86,6 +99,9 @@ public class HttpTaskServer {
         httpServer.start(); // запускаем сервер
 
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+    }
 
+    private static void stopHTTPServer(HttpServer httpServer) {
+        httpServer.stop(0);
     }
 }

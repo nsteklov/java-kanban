@@ -1,3 +1,5 @@
+package taskstructure;
+
 import java.util.Objects;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -117,7 +119,7 @@ public class Task {
         if (duration != null) {
             durationMinutes = duration.toMinutes();
         }
-        return "Task{" +
+        return "TaskStructure.Task{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", start time='" + startTimeFormatted + '\'' +

@@ -1,8 +1,15 @@
+import exceptions.NotFoundException;
+import managers.*;
+import taskstructure.Epic;
+import taskstructure.Status;
+import taskstructure.Subtask;
+import taskstructure.Task;
+import exceptions.NotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.time.Duration;
-import java.util.TreeSet;
 
 public class Main {
 
@@ -179,7 +186,7 @@ public class Main {
             System.out.println(exception.getMessage());
         }
 
-        TreeSet<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+        List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
         for (Task task : prioritizedTasks) {
             System.out.println(task);
         }

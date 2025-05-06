@@ -1,3 +1,9 @@
+import exceptions.NotFoundException;
+import managers.*;
+import taskstructure.Epic;
+import taskstructure.Status;
+import taskstructure.Subtask;
+import taskstructure.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -299,7 +305,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         } catch (InMemoryTaskManager.IntersectionException exception) {
             System.out.println(exception.getMessage());
         }
-        task1.setName("Task 1*");
+        task1.setName("TaskStructure.Task 1*");
         task1.setDescription("ФЗ спринта 6 очень сложное");
         try {
             taskManager.updateTask(task1);
@@ -311,7 +317,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         } catch (NotFoundException exception) {
             System.out.println(exception.getDetailMessage());
         }
-        assertEquals(task1.getName(), "Task 1*");
+        assertEquals(task1.getName(), "TaskStructure.Task 1*");
         assertEquals(task1.getDescription(), "ФЗ спринта 6 очень сложное");
     }
 
