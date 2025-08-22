@@ -1,5 +1,5 @@
 id,type,name,status,description,epic
 1,TASK,Task1,IN_PROGRESS,Пою,2025-04-15T09:15,10
-8,TASK,Task3,NEW,Вне времени,,45
-6,EPIC,Epic2,NEW,Идти в спортзал,2025-04-15T12:40,20,2025-04-15T13:00
-7,SUBTASK,Subtask3,NEW,Поднять гантели,2025-04-15T12:40,20,6
+7,TASK,Task3,NEW,Вне времени,,45
+5,EPIC,Epic2,NEW,Идти в спортзал,2025-04-15T12:40,20,2025-04-15T13:00
+6,SUBTASK,Subtask3,NEW,Поднять гантели,2025-04-15T12:40,20,5

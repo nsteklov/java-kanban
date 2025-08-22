@@ -1,3 +1,11 @@
+package managers;
+
+import taskstructure.Epic;
+import taskstructure.Status;
+import taskstructure.Subtask;
+import taskstructure.Task;
+import exceptions.NotFoundException;
+
 import java.io.Writer;
 import java.io.FileWriter;
 import java.io.FileReader;
@@ -17,8 +25,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         Path filePath = Paths.get("C:\\Users\\Java\\java-kanban\\java-kanban\\tasksForLoad.csv");
         File file = filePath.toFile();
-        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
-
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager();
+        try {
+            fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getDetailMessage());
+        }
         ArrayList<Task> listOfTasks = fileBackedTaskManager.getTasks();
         System.out.println(listOfTasks);
 
@@ -49,7 +61,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.fileName = fileName;
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile(File file) throws NotFoundException {
 
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager();
         boolean firstLine = true;
@@ -71,11 +83,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     Epic epic = fileBackedTaskManager.getEpicById(iDOfEpic);
                     if (epic != null) {
                         epic.addIDOfSubtask(iDOfSubtask);
+                    } else {
+                        throw new NotFoundException("Эпик не найден", iDOfEpic);
                     }
-                    fileBackedTaskManager.updateEpic(epic);
-                    fileBackedTaskManager.updateSubtask((Subtask) task);
+                    try {
+                        fileBackedTaskManager.updateSubtask((Subtask) task);
+                        fileBackedTaskManager.updateEpic(epic);
+                    } catch (InMemoryTaskManager.IntersectionException exception) {
+                        System.out.println(exception.getMessage());
+                    }
                 } else {
-                    fileBackedTaskManager.updateTask(task);
+                    try {
+                        fileBackedTaskManager.updateTask(task);
+                    } catch (InMemoryTaskManager.IntersectionException exception) {
+                        System.out.println(exception.getMessage());
+                    }
                 }
                 int idOfTask = task.getId();
                 if (idOfTask > maxID) {
@@ -109,7 +131,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws IntersectionException {
         super.addTask(task);
         save();
     }
@@ -121,13 +143,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws IntersectionException, NotFoundException {
         super.addSubtask(subtask);
         save();
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws IntersectionException {
         super.updateTask(task);
         save();
     }
@@ -139,25 +161,25 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws IntersectionException, NotFoundException {
         super.updateSubtask(subtask);
         save();
     }
 
     @Override
-    public void removeTask(Integer id) {
+    public void removeTask(Integer id) throws NotFoundException {
         super.removeTask(id);
         save();
     }
 
     @Override
-    public void removeEpic(Integer id) {
+    public void removeEpic(Integer id) throws NotFoundException {
         super.removeEpic(id);
         save();
     }
 
     @Override
-    public void removeSubtask(Integer id) {
+    public void removeSubtask(Integer id) throws NotFoundException {
         super.removeSubtask(id);
         save();
     }

@@ -1,9 +1,11 @@
+package taskstructure;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-class Epic extends Task {
+public class Epic extends Task {
     private ArrayList<Integer> iDOfSubtasks;
     private LocalDateTime endTime;
 
@@ -67,7 +69,7 @@ class Epic extends Task {
         if (duration != null) {
             durationMinutes = duration.toMinutes();
         }
-        return "Epic{" +
+        return "TaskStructure.Epic{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", start time='" + startTimeFormatted + '\'' +
